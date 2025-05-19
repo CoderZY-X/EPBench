@@ -24,7 +24,7 @@ def weighted_mse_loss(y_pred, y_true, feature_weights, sample_weights):
 
 
 class EarthquakeDataset(Dataset):
-    def __init__(self, data, input_features, output_features, time_steps=96):
+    def __init__(self, data, input_features, output_features, time_steps=24):
         self.data = data
         self.time_steps = time_steps
         self.input_features = input_features
