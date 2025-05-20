@@ -12,7 +12,7 @@ from sklearn.preprocessing import MinMaxScaler
 class LearnablePositionalEncoding(nn.Module):
     def __init__(self, max_len, d_model):
         super().__init__()
-        self.position = nn.Parameter(torch.randn(1, max_len, d_model))
+        self.position = nn.Parameter(torch.randn(1, max_len, d_model))  
 
     def forward(self, x):
         return x + self.position[:, :x.size(1), :]
@@ -30,15 +30,15 @@ class TransformerEncoderLayer(nn.Module):
         self.norm2 = nn.LayerNorm(d_model)
         self.dropout1 = nn.Dropout(dropout)
         self.dropout2 = nn.Dropout(dropout)
-        self.activation = nn.GELU()
+        self.activation = nn.GELU() 
 
     def forward(self, src):
-
+     
         src2, _ = self.self_attn(src, src, src)
         src = src + self.dropout1(src2)
         src = self.norm1(src)
 
-
+  
         src2 = self.linear2(self.dropout(self.activation(self.linear1(src))))
         src = src + self.dropout2(src2)
         src = self.norm2(src)
@@ -46,41 +46,54 @@ class TransformerEncoderLayer(nn.Module):
 
 
 
-class EPTransformer(nn.Module):
-    def __init__(self, input_dim, output_dim, seq_len=12):
+class EnhancedEarthquakeTransformer(nn.Module):
+    def __init__(self, input_dim=4, output_dim=10, seq_len=96):
         super().__init__()
-        self.pos_encoder = LearnablePositionalEncoding(seq_len, input_dim)
+  
+        self.feature_transform = nn.Sequential(
+            nn.Linear(input_dim, 64),
+            nn.GELU(),
+            nn.Linear(64, 128),
+            nn.GELU(),
+            nn.Linear(128, 256)  
+        )
 
+        self.pos_encoder = LearnablePositionalEncoding(seq_len, 256)
 
+ 
         self.encoder_layers = nn.ModuleList([
             TransformerEncoderLayer(
-                d_model=input_dim,
-                nhead=4,
-                dim_feedforward=256,
+                d_model=256,
+                nhead=8,
+                dim_feedforward=512,
                 dropout=0.1
             ) for _ in range(6)
         ])
 
         self.pool = nn.AdaptiveAvgPool1d(1)
         self.fc = nn.Sequential(
-            nn.Linear(input_dim, 256),
+            nn.Linear(256, 128),
             nn.GELU(),
             nn.Dropout(0.1),
-            nn.Linear(256, output_dim)
+            nn.Linear(128, output_dim)
         )
 
     def forward(self, x):
-
+       
+        x = self.feature_transform(x)  
         x = self.pos_encoder(x)
-        x = x.permute(1, 0, 2)
+        x = x.permute(1, 0, 2)  
 
-
+        # 逐层编码
         for layer in self.encoder_layers:
             x = layer(x)
 
-        x = x.permute(1, 0, 2)
-        x = self.pool(x.permute(0, 2, 1)).squeeze(-1)
-        return self.fc(x)
+        x = x.permute(1, 0, 2)  
+    
+        x = self.pool(x.permute(0, 2, 1)).squeeze(-1)  # (batch, 256)
+      
+        output = self.fc(x)
+        return output
 
 
 
@@ -91,13 +104,13 @@ class WeightedEarthquakeDataset(Dataset):
         self.input_features = input_features
         self.output_features = output_features
 
-        # 初始化归一化器
+ 
         self.scaler_X = MinMaxScaler()
         self.scaler_y = MinMaxScaler()
         self.scaled_X = self.scaler_X.fit_transform(data[input_features])
         self.scaled_y = self.scaler_y.fit_transform(data[output_features])
 
-
+     
         self.indices = np.arange(len(self.scaled_X) - time_steps)
         self.sample_weights = self._calculate_sample_weights()
 
@@ -106,7 +119,7 @@ class WeightedEarthquakeDataset(Dataset):
         weights = []
         for i in self.indices:
             target_idx = i + self.time_steps
-            mag = self.data.iloc[target_idx]['magnitude']
+            mag = self.data.iloc[target_idx]['magnitude'] 
             weights.append(10.0 if mag >= 5 else 1.0)
         return np.array(weights)
 
@@ -151,18 +164,18 @@ def load_data_from_folder(folder_path):
             df = pd.read_csv(file_path)
             df.columns = df.columns.str.lower()
 
-
+    
             df['time'] = df['time'].str.replace(r'\s+', ' ', regex=True)
             df['time'] = df['time'].str.replace(r'\.\d+$', '', regex=True)
             df['time'] = pd.to_datetime(df['time'], format='%Y-%m-%d %H:%M:%S', errors='coerce')
             df = df.dropna(subset=['time']).sort_values('time')
-            df = df.dropna()
 
+       
             if prev_last_time is not None:
                 time_diff = (df.iloc[0]['time'] - prev_last_time).total_seconds() / 3600
                 df.at[df.index[0], 'delta_time'] = time_diff
 
-
+      
             df['delta_time'] = df['time'].diff().dt.total_seconds() / 3600
             prev_last_time = df.iloc[-1]['time']
 
@@ -171,32 +184,20 @@ def load_data_from_folder(folder_path):
             print(f"Failed to load {file_path}: {str(e)}")
 
     combined_df = pd.concat(full_data).sort_values('time')
-    combined_df = combined_df.dropna(subset=['delta_time'])
+    combined_df = combined_df.dropna(subset=['delta_time'])  
     return combined_df
 
 
-def prepare_dataset(data, input_features, output_features, time_steps=96):
-    scaler_X = MinMaxScaler()
-    scaler_y = MinMaxScaler()
 
-    scaled_X = scaler_X.fit_transform(data[input_features])
-    scaled_y = scaler_y.fit_transform(data[output_features])
-
-    X, y = [], []
-    for i in range(len(scaled_X) - time_steps):
-        X.append(scaled_X[i:i + time_steps])
-        y.append(scaled_y[i + time_steps])
-
-    return np.array(X), np.array(y), scaler_X, scaler_y
 
 if __name__ == "__main__":
 
-    DATA_FOLDER = ".../"
-    TIME_STEPS = 196
+    DATA_FOLDER = ".../train/6"
+    TIME_STEPS = 96
     EPOCHS = 400
     BATCH_SIZE = 32
-    TARGET_DATE = pd.to_datetime('1995-04-01') # prediction cutoff
-    FEATURE_WEIGHTS = [1.0, 3.0, 3.0, 1.0]
+    TARGET_DATE = pd.to_datetime('2020-04-01')
+    FEATURE_WEIGHTS = [1.0, 3.0, 3.0, 1.0]  
     input_features = ['magnitude', 'latitude', 'longitude', 'delta_time']
     output_features = ['magnitude', 'latitude', 'longitude', 'delta_time']
 
@@ -217,9 +218,9 @@ if __name__ == "__main__":
         num_workers=4
     )
 
-    # 初始化模型和损失函数
+  
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = EPTransformer(
+    model = EnhancedEarthquakeTransformer(
         input_dim=len(input_features),
         output_dim=len(output_features),
         seq_len=TIME_STEPS
@@ -228,7 +229,7 @@ if __name__ == "__main__":
     criterion = WeightedMSELoss(FEATURE_WEIGHTS)
     optimizer = optim.AdamW(model.parameters(), lr=1e-4, weight_decay=0.01)
 
-
+    
     model.train()
     for epoch in range(EPOCHS):
         total_loss = 0.0
@@ -241,7 +242,7 @@ if __name__ == "__main__":
             outputs = model(X_batch)
             loss = criterion(outputs, y_batch, weights_batch)
             loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)  
             optimizer.step()
 
             total_loss += loss.item() * X_batch.size(0)
@@ -257,7 +258,7 @@ if __name__ == "__main__":
     last_timestamp = processed_data['time'].iloc[-1]
     results = []
 
-
+   
     with torch.no_grad():
         while True:
             pred = model(last_sequence)
@@ -278,7 +279,7 @@ if __name__ == "__main__":
                 'delta_time': delta_hours
             })
 
-
+      
             new_input = dataset.scaler_X.transform([pred_denorm])
             new_tensor = torch.tensor(new_input, dtype=torch.float32).to(device)
             last_sequence = torch.cat(
@@ -289,6 +290,6 @@ if __name__ == "__main__":
 
 
     result_df = pd.DataFrame(results)
-    output_path = os.path.join('.../output', 'tran-prediction.csv')
+    output_path = os.path.join('.../output', 'transformer-prediction.csv')
     result_df.to_csv(output_path, index=False, encoding='utf-8-sig')
     print(f"prediction saved to：{output_path}")
