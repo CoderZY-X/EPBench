@@ -62,7 +62,7 @@ class TransformerEncoder(nn.Module):
 
 
 class EPDiff(nn.Module):
-    def __init__(self, input_dim, cond_steps, cond_dim, device):  # 新增device参数
+    def __init__(self, input_dim, cond_steps, cond_dim, device):  
         super().__init__()
         self.device = device
 
@@ -115,13 +115,12 @@ class EarthquakeDataset(Dataset):
         self.input_features = input_features
         self.output_features = output_features
 
-        # 初始化归一化器
+  
         self.scaler_X = MinMaxScaler()
         self.scaler_y = MinMaxScaler()
         self.scaled_X = self.scaler_X.fit_transform(data[input_features])
         self.scaled_y = self.scaler_y.fit_transform(data[output_features])
 
-        # 生成样本索引
         self.indices = np.arange(len(self.scaled_X) - time_steps)
 
     def __len__(self):
@@ -140,7 +139,7 @@ def train_diffusion_model(model, dataloader, feature_weights_dict, epochs=100, d
 
     optimizer = optim.AdamW(model.parameters(), lr=1e-4, weight_decay=0.01)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, epochs)
-    loss_fn = weighted_mse_loss(feature_weights_dict).to(device)  # 关键修改点
+    loss_fn = weighted_mse_loss(feature_weights_dict).to(device)  
 
 
     for epoch in range(epochs):
