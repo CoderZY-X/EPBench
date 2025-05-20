@@ -258,7 +258,7 @@ def load_data_from_folder(folder_path):
 if __name__ == "__main__":
 
     DATA_FOLDER = r".../train/6"
-    TIME_STEPS = 96
+    TIME_STEPS = 196
     EPOCHS = 400
     BATCH_SIZE = 64
     TARGET_DATE = pd.to_datetime('2020-04-01') # prediction cutoff
