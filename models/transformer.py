@@ -192,7 +192,7 @@ def prepare_dataset(data, input_features, output_features, time_steps=96):
 if __name__ == "__main__":
 
     DATA_FOLDER = ".../"
-    TIME_STEPS = 96
+    TIME_STEPS = 196
     EPOCHS = 400
     BATCH_SIZE = 32
     TARGET_DATE = pd.to_datetime('1995-04-01') # prediction cutoff
