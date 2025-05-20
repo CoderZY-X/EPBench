@@ -59,7 +59,7 @@ class EarthquakeDataset(Dataset):
 
 
 class EPLSTM(nn.Module):
-    def __init__(self, input_size, output_size, sequence_length=96):
+    def __init__(self, input_size, output_size, sequence_length=196):
         super().__init__()
         self.sequence_length = sequence_length
 
