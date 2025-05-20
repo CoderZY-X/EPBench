@@ -186,7 +186,7 @@ if __name__ == "__main__":
 
     DATA_FOLDER = r".../train/6"
     SAVE_PATH = ".../lstm_model.pth"
-    TIME_STEPS = 96
+    TIME_STEPS = 196
     EPOCHS = 400
     BATCH_SIZE = 32
     TARGET_DATE = pd.to_datetime('2020-04-01') # prediction cutoff
