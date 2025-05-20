@@ -161,7 +161,7 @@ def load_data_from_folder(folder_path):
 if __name__ == "__main__":
 
     DATA_FOLDER = r".../train/6"  # prediction cutoff
-    TIME_STEPS = 96
+    TIME_STEPS = 196
     EPOCHS = 400
     BATCH_SIZE = 32
     TARGET_DATE = pd.to_datetime('1995-04-01')
