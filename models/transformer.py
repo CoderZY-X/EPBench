@@ -47,7 +47,7 @@ class TransformerEncoderLayer(nn.Module):
 
 
 class EPTransformer(nn.Module):
-    def __init__(self, input_dim=4, output_dim=10, seq_len=96):
+    def __init__(self, input_dim=4, output_dim=10, seq_len=196):
         super().__init__()
 
         self.feature_transform = nn.Sequential(
@@ -193,7 +193,7 @@ def load_data_from_folder(folder_path):
 if __name__ == "__main__":
 
     DATA_FOLDER = ".../train/6"
-    TIME_STEPS = 96
+    TIME_STEPS = 196
     EPOCHS = 400
     BATCH_SIZE = 32
     TARGET_DATE = pd.to_datetime('2020-04-01')
