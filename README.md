@@ -47,7 +47,7 @@ $ python cnn/lstm/transformer/diffusion.py
 
 ```
 ### Testing
-Please first modify the input(ground truth) and output(prediction) file paths in the Python script. All paths are configured at the top of the program.
+Please first modify the input(ground truth and prediction) file paths in the Python script. All paths are configured at the top of the program.
 
 Then for neural network models, you can run:
 
