@@ -29,3 +29,8 @@ Some core dependencies:
 - numpy==2.2.6
 
 More details can be found in <./requirements.txt>
+
+### Datasets
+
+More details can be found at:
+- EarthQuake1970~2021 Datasets: <https://www.kaggle.com/datasets/drloser/earthquake19702021>
