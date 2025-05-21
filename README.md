@@ -55,9 +55,13 @@ Then for neural network models, you can run:
 $ python evaluation.py
 ```
 For the ETAS models, you can run:
-
+QQQQQQQQQQQQQQQQ
 ```shell
 $ python evaluation-etas.py
 ```
 ### ETAS
 The details and code of the ETAS model can be found at "https://zenodo.org/records/7584575".
+
+## Acknowledgement
+[USGS](https://www.usgs.gov/)
+[SAGE](https://ds.iris.edu/ds/)
