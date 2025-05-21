@@ -64,4 +64,5 @@ The details and code of the ETAS model can be found at "https://zenodo.org/recor
 
 ## Acknowledgement
 [USGS](https://www.usgs.gov/)
+
 [SAGE](https://ds.iris.edu/ds/)
