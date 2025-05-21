@@ -10,5 +10,5 @@ Qingliang Chen
 
 ## 🚀
 <div align="center">
-<img width="800" alt="image" src="figs/distribute.png">
+<img width="700" height="400" alt="image" src="figs/distribute.png">
 </div>
