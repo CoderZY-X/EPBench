@@ -34,3 +34,30 @@ More details can be found in <./requirements.txt>
 
 More details can be found at:
 - EarthQuake1970~2021 Datasets: <https://www.kaggle.com/datasets/drloser/earthquake19702021>
+  
+
+### Training
+
+Please first modify the input(training) and output(prediction) file paths in the target model's Python script. All paths are configured within the ```if __name__ == '__main__':``` block.
+
+Then you can run:
+
+```shell
+$ python cnn/lstm/transformer/diffusion.py
+
+```
+### Testing
+Please first modify the input(ground truth) and output(prediction) file paths in the Python script. All paths are configured at the top of the program.
+
+Then for neural network models, you can run:
+
+```shell
+$ python evaluation.py
+```
+For the ETAS models, you can run:
+
+```shell
+$ python evaluation-etas.py
+```
+### ETAS
+The details and code of the ETAS model can be found at "https://zenodo.org/records/7584575".
