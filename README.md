@@ -55,7 +55,7 @@ Then for neural network models, you can run:
 $ python evaluation.py
 ```
 For the ETAS models, you can run:
-QQQQQQQQQQQQQQQQ
+
 ```shell
 $ python evaluation-etas.py
 ```
